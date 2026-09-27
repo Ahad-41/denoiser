@@ -3,6 +3,8 @@
 # lists as a new version of the PRIVATE Kaggle dataset <KAGGLE_USER>/<CKPT_DATASET>.
 # MODE.txt in it tells the Kaggle kernel which mode to train.
 # Usage: ./push_ckpt.sh causal|noncausal
+#        SMOKE=1 ./push_ckpt.sh causal   short Kaggle check from scratch (no checkpoint uploaded;
+#                                        output lands in smoke-<mode>, never in <mode>)
 set -euo pipefail
 cd "$(dirname "$0")"
 source config.sh
@@ -15,9 +17,12 @@ cat > "$STAGE/dataset-metadata.json" <<JSON
 {"title": "$CKPT_DATASET", "id": "$KAGGLE_USER/$CKPT_DATASET", "licenses": [{"name": "unknown"}]}
 JSON
 printf "%s\n%s\n" "$MODE" "$(date '+%Y-%m-%d_%H:%M')" > "$STAGE/MODE.txt"
+if [ "${SMOKE:-0}" = 1 ]; then echo SMOKE >> "$STAGE/MODE.txt"; fi
 cp "$SPLIT_DIR/train.txt" "$SPLIT_DIR/valid.txt" "$STAGE/"
 
-if [ -f "outputs/$MODE/checkpoint.th" ]; then
+if [ "${SMOKE:-0}" = 1 ]; then
+  echo "SMOKE run: no checkpoint uploaded"
+elif [ -f "outputs/$MODE/checkpoint.th" ]; then
   # top-level files only (checkpoint.th, best.th, history.json, trainer.log*)
   find "outputs/$MODE" -maxdepth 1 -type f ! -name '*.tmp' ! -name rendezvous \
     -exec cp {} "$STAGE/" \;
@@ -29,7 +34,7 @@ fi
 ls -la "$STAGE"
 
 if "$KAGGLE" datasets status "$KAGGLE_USER/$CKPT_DATASET" >/dev/null 2>&1; then
-  "$KAGGLE" datasets version -p "$STAGE" -m "$MODE $(date '+%F %T')"
+  "$KAGGLE" datasets version -p "$STAGE" -m "$MODE${SMOKE:+ smoke} $(date '+%F %T')"
 else
   "$KAGGLE" datasets create -p "$STAGE"      # private unless --public is given
 fi

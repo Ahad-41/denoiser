@@ -37,7 +37,9 @@ Full step log (Bangla): `~/demucs_denoiser/SETUP_LOG.md`.
 - Test files must never appear in train or valid.
 - Ask the user before: any Kaggle upload/push, any git push, starting any long training run.
 - Work in phases; after each, report in Bangla and update SETUP_LOG.md.
-- Do NOT run anything on the server GPU unless the user explicitly asks (it is shared).
+- Server GPU is shared: never run anything on it yourself. When a server-GPU step is needed
+  (e.g. `./evaluate_test.sh`), give the user the exact command and let them run it.
+- Use GPU for all compute (not CPU fallbacks); scripts stay GPU-first.
 
 ## Environment
 - Server conda env `demucs` = Kaggle image: python 3.12.13, torch/torchaudio 2.10.0+cu128,
@@ -53,5 +55,7 @@ Full step log (Bangla): `~/demucs_denoiser/SETUP_LOG.md`.
   `./pull_ckpt.sh causal`. Kernel clones branch `bengali-baseline` from GitHub and reads the
   mode from MODE.txt in the ckpt dataset; stops after TRAIN_HOURS=11.
 - Server run: `./run.sh causal|noncausal` (batch 64 does not fit one T4 — unresolved).
-- Smoke test: `EPOCHS=1 LIMIT=64 RUN_DIR=outputs/smoke ./run.sh causal`.
+- Kaggle smoke check: `SMOKE=1 ./push_ckpt.sh causal` → `kaggle kernels push -p kaggle/` →
+  output `smoke-causal/` (500 files, 2 epochs + resume to 3, PESQ every epoch, gpu_log.csv).
+  Real run afterwards: plain `./push_ckpt.sh causal` (MODE.txt without SMOKE).
 - Test scoring: `./evaluate_test.sh causal` → `~/demucs_denoiser/results/<mode>/`.
