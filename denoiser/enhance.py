@@ -12,8 +12,8 @@ import logging
 import os
 import sys
 
+import soundfile as sf
 import torch
-import torchaudio
 
 from .audio import Audioset, find_audio_files
 from . import distrib, pretrained
@@ -80,7 +80,7 @@ def save_wavs(estimates, noisy_sigs, filenames, out_dir, sr=16_000):
 def write(wav, filename, sr=16_000):
     # Normalize audio if it prevents clipping
     wav = wav / max(wav.abs().max().item(), 1)
-    torchaudio.save(filename, wav.cpu(), sr)
+    sf.write(filename, wav.cpu().numpy().T, sr, subtype='FLOAT')
 
 
 def get_dataset(args, sample_rate, channels):

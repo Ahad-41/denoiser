@@ -83,6 +83,9 @@ class LowPassFilters(torch.nn.Module):
         t = np.arange(-width, width + 1, dtype=np.float32)
         filters = []
         for cutoff in cutoffs:
+            # float(): with numpy >= 2 a np.float64 cutoff would promote the filters
+            # to float64 (numpy 1.x kept float32, as intended here).
+            cutoff = float(cutoff)
             sinc = torch.from_numpy(np.sinc(2 * cutoff * t))
             filters.append(2 * cutoff * sinc * window)
         self.register_buffer("filters", torch.stack(filters).unsqueeze(1))

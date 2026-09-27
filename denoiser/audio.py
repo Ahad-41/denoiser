@@ -12,7 +12,8 @@ import math
 import os
 import sys
 
-import torchaudio
+import soundfile as sf
+import torch
 from torch.nn import functional as F
 
 from .dsp import convert_audio
@@ -21,13 +22,8 @@ Info = namedtuple("Info", ["length", "sample_rate", "channels"])
 
 
 def get_info(path):
-    info = torchaudio.info(path)
-    if hasattr(info, 'num_frames'):
-        # new version of torchaudio
-        return Info(info.num_frames, info.sample_rate, info.num_channels)
-    else:
-        siginfo = info[0]
-        return Info(siginfo.length // siginfo.channels, siginfo.rate, siginfo.channels)
+    info = sf.info(path)
+    return Info(info.frames, info.samplerate, info.channels)
 
 
 def find_audio_files(path, exts=[".wav"], progress=True):
@@ -86,12 +82,11 @@ class Audioset:
             if self.length is not None:
                 offset = self.stride * index
                 num_frames = self.length
-            if torchaudio.get_audio_backend() in ['soundfile', 'sox_io']:
-                out, sr = torchaudio.load(str(file),
-                                          frame_offset=offset,
-                                          num_frames=num_frames or -1)
-            else:
-                out, sr = torchaudio.load(str(file), offset=offset, num_frames=num_frames)
+            # Same as torchaudio.load with the soundfile backend: float32 in [-1, 1],
+            # shape (channels, time).
+            out, sr = sf.read(str(file), start=offset, frames=num_frames or -1,
+                              dtype='float32', always_2d=True)
+            out = torch.from_numpy(out.T.copy())
             target_sr = self.sample_rate or sr
             target_channels = self.channels or out.shape[0]
             if self.convert:

@@ -1,7 +1,8 @@
 defaults:
   - dset: debug
-  - hydra/job_logging: colorlog
-  - hydra/hydra_logging: colorlog
+  - override hydra/job_logging: colorlog
+  - override hydra/hydra_logging: colorlog
+  - _self_
 
 # Dataset related
 sample_rate: 16000
@@ -108,7 +109,7 @@ hydra:
     handlers:
       file:
         class: logging.FileHandler
-        mode: w
+        mode: a
         formatter: colorlog
         filename: trainer.log
       console:

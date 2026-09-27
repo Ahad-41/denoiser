@@ -104,7 +104,7 @@ class Solver(object):
 
         if load_from:
             logger.info(f'Loading checkpoint model: {load_from}')
-            package = torch.load(load_from, 'cpu')
+            package = torch.load(load_from, 'cpu', weights_only=False)
             if load_best:
                 self.model.load_state_dict(package['best_state'])
             else:

@@ -1,0 +1,4 @@
+# Server only: packages needed by the supervisor's evaluate_se_fast_v3.py
+tqdm==4.70.1
+mir_eval==0.8.2
+onnxruntime==1.30.0

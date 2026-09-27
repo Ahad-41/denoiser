@@ -1,0 +1,12 @@
+# Extra packages for the Bengali baseline, installed the same way on the server and on
+# Kaggle (pip install -r requirements_bengali.txt). Python/torch/torchaudio/numpy/scipy/
+# soundfile/omegaconf come from Kaggle's image; the server's conda env "demucs" pins the
+# same versions (see SETUP_LOG.md): python 3.12.13, torch/torchaudio 2.10.0+cu128,
+# numpy 2.0.2, scipy 1.16.3, soundfile 0.13.1, omegaconf 2.3.0.
+hydra-core==1.3.2
+hydra-colorlog==1.2.0
+colorlog==6.12.0
+julius==0.2.8
+pesq==0.0.4
+pystoi==0.4.1
+soundfile==0.13.1

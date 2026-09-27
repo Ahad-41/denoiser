@@ -1,0 +1,11 @@
+# @package _global_
+# Bengali SE baseline. Built by prepare_data.py (run.sh does it).
+dset:
+  train: egs/mydata/tr
+  valid: egs/mydata/cv  # supervisor's speaker-disjoint val split; picks best.th
+  test: egs/mydata/cv   # PESQ/STOI every eval_every epochs on VAL; the real test set
+                        # is never used during training (see evaluate_test.sh)
+  noisy_json: egs/mydata/ts/noisy.json  # a few val files enhanced into samples/
+  noisy_dir:
+  matching: sort
+pesq: 1

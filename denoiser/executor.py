@@ -14,6 +14,7 @@ import subprocess as sp
 import sys
 
 from hydra import utils
+from hydra.core.hydra_config import HydraConfig
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ class ChildrenManager:
 
 def start_ddp_workers(cfg):
     import torch as th
-    log = utils.HydraConfig().hydra.job_logging.handlers.file.filename
+    log = HydraConfig.get().job_logging.handlers.file.filename
     rendezvous_file = Path(cfg.rendezvous_file)
     if rendezvous_file.exists():
         rendezvous_file.unlink()

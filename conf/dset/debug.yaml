@@ -1,3 +1,4 @@
+# @package _global_
 dset:
   train: egs/debug/tr  # path to train folder, should contain both a noisy.json and clean.json file
   valid: egs/debug/tr  # path to the validation folder.
