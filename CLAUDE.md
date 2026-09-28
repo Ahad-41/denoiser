@@ -25,6 +25,8 @@ Full step log (Bangla): `~/demucs_denoiser/SETUP_LOG.md`.
   resumes on either machine (solver auto-loads `checkpoint.th` from the run dir).
 - During training: valid = supervisor's val split, and `tt` also = val (never the real test).
 - Paper metrics: only from supervisor's `evaluate_se_fast_v3.py` on enhanced test outputs.
+  DNSMOS: model `~/demucs_denoiser/dnsmos_models/sig_bak_ovr.onnx` (= Microsoft non-personalized),
+  **uncalibrated** — never pass `--dnsmos_calibrate` (supervisor's choice, 2026-09-28).
 - Server holds master data + checkpoints. Kaggle = borrowed GPU:
   private dataset `ahad41/bengali-dataset` (audio), private dataset `ahad41/demucs-ckpt`
   (checkpoints + split lists). Kernel pushed from the server with the kaggle CLI; training
@@ -55,6 +57,8 @@ Full step log (Bangla): `~/demucs_denoiser/SETUP_LOG.md`.
   `./pull_ckpt.sh causal`. Kernel clones branch `bengali-baseline` from GitHub and reads the
   mode from MODE.txt in the ckpt dataset; stops after TRAIN_HOURS=11.
 - Server run: `./run.sh causal|noncausal` (batch 64 does not fit one T4 — unresolved).
+- Kaggle smoke run (2026-09-27): DDP 2×T4 OK, ~10.2 GB/15 GB per GPU at batch 64 (32/GPU),
+  ~1.25 s/iteration → ~21 min/epoch causal, ~30 epochs per 11 h session.
 - Kaggle smoke check: `SMOKE=1 ./push_ckpt.sh causal` → `kaggle kernels push -p kaggle/` →
   output `smoke-causal/` (500 files, 2 epochs + resume to 3, PESQ every epoch, gpu_log.csv).
   Real run afterwards: plain `./push_ckpt.sh causal` (MODE.txt without SMOKE).

@@ -18,7 +18,7 @@ from pathlib import Path
 # ---------------- settings ----------------
 GITHUB_REPO = "https://github.com/Ahad-41/denoiser.git"
 BRANCH = "bengali-baseline"
-TRAIN_HOURS = 11.0     # Kaggle kills sessions at 12 h; setup + saving need the rest
+TRAIN_HOURS = 6.5      # 11.0 normally (Kaggle kills at 12 h); 6.5 while weekly quota < 7.6 h
 NUM_WORKERS = 2        # data loader workers per GPU process (Kaggle has 4 CPUs)
 SMOKE_HOURS = 1.0      # time cap of a smoke run
 SMOKE_LIMIT = 500      # files per split in a smoke run
